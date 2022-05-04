@@ -12,6 +12,13 @@ def main():
     with open('train.json', 'w') as f:
         f.write(json.dumps(train))
 
+    test = [[], list(map(int, test_y))]
+    for i in range(test_X.shape[0]):
+        test[0].append([list(map(int, row)) for row in test_X[i]])
+
+    with open('test.json', 'w') as f:
+        f.write(json.dumps(test))
+
 
 if __name__ == '__main__':
     main()

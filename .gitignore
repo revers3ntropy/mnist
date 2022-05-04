@@ -12,3 +12,4 @@
 
 # labelled data
 /train.json
+/test.json

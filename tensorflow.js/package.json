@@ -2,7 +2,8 @@
     "name": "mnist",
     "version": "1.0.0",
     "dependencies": {
-        "@tensorflow/tfjs-node": "^3.16.0"
+        "@tensorflow/tfjs-node": "^3.16.0",
+        "performance-now": "^2.1.0"
     },
     "type": "module"
 }

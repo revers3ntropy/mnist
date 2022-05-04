@@ -13,3 +13,7 @@
 # labelled data
 /train.json
 /test.json
+
+# models
+/tensorflow.js/model/
+/tensorflow/model/

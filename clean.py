@@ -1,15 +1,17 @@
-import numpy as np
-import struct
+from keras.datasets import mnist
+import json
 
-with open('train-images.idx3-ubyte', 'rb') as f:
-    magic, size = struct.unpack(">II", f.read(8))
-    nrows, ncols = struct.unpack(">II", f.read(8))
-    data = np.fromfile(f, dtype=np.dtype(np.uint8).newbyteorder('>'))
-    data = data.reshape((size, nrows, ncols))
 
-    import matplotlib.pyplot as plt
+def main():
+    (train_X, train_y), (test_X, test_y) = mnist.load_data()
 
-    plt.imshow(data[0], cmap='gray')
-    plt.show()
+    train = [[], list(map(int, train_y))]
+    for i in range(train_X.shape[0]):
+        train[0].append([list(map(int, row)) for row in train_X[i]])
 
-    print(data[0])
+    with open('train.json', 'w') as f:
+        f.write(json.dumps(train))
+
+
+if __name__ == '__main__':
+    main()

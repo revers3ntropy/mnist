@@ -1,6 +1,14 @@
-/package-lock.json
-/train.json
-/train-images.idx3-ubyte
-/venv/
-/tensorflow.js/node_modules/
 /.idea/
+/venv/
+
+# depenacies
+/package-lock.json
+/tensorflow.js/package-lock.json
+/tensorflow.js/node_modules/
+
+# raw data
+/train-images.idx3-ubyte
+/train-labels.idx1-ubyte
+
+# labelled data
+/train.json

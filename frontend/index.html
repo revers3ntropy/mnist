@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MNIST solution</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.7.0"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis@1.5.1/dist/tfjs-vis.umd.min.js"></script>
+    <script src="index.js" defer></script>
+    <style>
+        canvas {
+            border:1px solid #b9bfc9;margin-top:25px;
+        }
+    </style>
+</head>
+<body>
+    <main id="container">
+      <p id="result">Prediction</p>
+      <div>
+        <button type="button" onclick="predictModel()">Predict</button>
+        <button type="button" onclick="erase()">Clear</button>
+      </div>
+      <canvas id="canvas" width="386px" height="386px"></canvas>
+    </main>
+</body>
+</html>

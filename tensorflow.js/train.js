@@ -11,8 +11,8 @@ const ALPHA = 0.02,
 	NUM_DIGITS = 10
 
 function getData () {
-	let [X, y] = JSON.parse(String(fs.readFileSync('../train.json')));
-	let [X_test, y_test] = JSON.parse(String(fs.readFileSync('../test.json')));
+	let [ X, y ] = JSON.parse(String(fs.readFileSync('../train.json')));
+	let [ X_test, y_test ] = JSON.parse(String(fs.readFileSync('../test.json')));
 
 	y = y.map(v => {
 		let arr = Array(NUM_DIGITS).fill(0);

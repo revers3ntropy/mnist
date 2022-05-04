@@ -2,6 +2,8 @@ import tensorflow as tf
 import tensorflow_datasets as tfds
 
 
+ALPHA = 0.001
+
 def main():
     (ds_train, ds_test), ds_info = tfds.load(
         'mnist',
@@ -33,16 +35,17 @@ def main():
         tf.keras.layers.Dense(128, activation='relu'),
         tf.keras.layers.Dense(10)
     ])
+
     model.compile(
-        optimizer=tf.keras.optimizers.Adam(0.001),
+        optimizer=tf.keras.optimizers.Adam(ALPHA),
         loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
         metrics=[tf.keras.metrics.SparseCategoricalAccuracy()],
     )
 
     model.fit(
         ds_train,
-        epochs=6,
-        validation_data=ds_test,
+        epochs=100,
+        validation_data=ds_test
     )
 
     model.save('file:///home/joseph/dev/mnist/tensorflow/model')

@@ -97,7 +97,7 @@ async function predictModel () {
 
         prediction.innerHTML += `
             <div style="width: 100%; margin: 10px;">
-                <div class=bar style="width: ${y[i] * 1000}px"> </div>
+                <div class=bar style="width: ${y[i] * 100}%"> </div>
                 <span style="float: left; transform: translate(20px, -20px)">
                     ${i}: ${(y[i] * 100).toFixed(2)}%
                 </span>

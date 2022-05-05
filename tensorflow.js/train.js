@@ -2,13 +2,19 @@ import * as tf from '@tensorflow/tfjs-node';
 import * as fs from 'fs';
 import now from 'performance-now';
 
-const ALPHA = 0.005,
-	EPOCHS = 100,
-	BATCH_SIZE = 300,
+const
+	// Constants
 	IMG_X = 28,
 	IMG_Y = 28,
-	HIDDEN_SIZE = 16,
-	NUM_DIGITS = 10;
+	NUM_DIGITS = 10,
+
+	// Model Parameters
+	HIDDEN_SIZE = 100,
+	BATCH_SIZE = 512,
+	ALPHA = 0.05,
+	EPOCHS = 20,
+	NUM_HIDDEN = 4;
+
 
 function max (arr) {
 	let maxIdx = -1;
@@ -30,13 +36,13 @@ function getData () {
 	let [ X_test, y_test ] = JSON.parse(String(fs.readFileSync('../test.json')));
 
 	y = y.map(v => {
-		let arr = Array(NUM_DIGITS).fill(-.1);
+		let arr = Array(NUM_DIGITS).fill(0);
 		arr[v] = 1;
 		return arr;
 	});
 
 	y_test = y_test.map(v => {
-		let arr = Array(NUM_DIGITS).fill(-.1);
+		let arr = Array(NUM_DIGITS).fill(0);
 		arr[v] = 1;
 		return arr;
 	});
@@ -86,18 +92,22 @@ async function main () {
 			activation: "tanh",
 		})
 	);
-	model.add(
-		tf.layers.dense({
-			units: HIDDEN_SIZE,
-			activation: "tanh",
-		})
-	);
 	model.add(tf.layers.flatten());
+
+	for (let i = 0; i < NUM_HIDDEN; i++) {
+		model.add(
+			tf.layers.dense({
+				units: HIDDEN_SIZE,
+				activation: "tanh",
+			})
+		);
+	}
 	model.add(
 		tf.layers.dense({
 			units: NUM_DIGITS,
 		})
 	);
+
 
 	model.compile({
 		optimizer: tf.train.sgd(ALPHA),
@@ -109,6 +119,8 @@ async function main () {
 
 	let start = now();
 
+	model.summary();
+
 	await model.fit(X, y, {
 		epochs: EPOCHS,
 		callbacks: {
@@ -116,7 +128,7 @@ async function main () {
 				losses.push(logs.loss);
 				times.push(now() - start);
 				start = now();
-				if (epoch % 100 === 0 || epoch === EPOCHS) {
+				if (epoch % 1 === 0 || epoch === EPOCHS) {
 					console.log(`Finished epoch ${epoch+1} / ${EPOCHS}: ${logs.loss}`);
 				}
 			},
@@ -127,11 +139,12 @@ async function main () {
 		validationData: [X_test, y_test]
 	});
 
-	console.log((times.reduce((a, b) => a + b, 0) / times.length).toFixed(5), 'ms on average');
+	const avTime = (times.reduce((a, b) => a + b, 0) / times.length).toFixed(5);
+	console.log(avTime, 'ms on average');
 
 	await test(model, X_test, y_test);
 
-	await model.save('file:///home/joseph/dev/mnist/tensorflow.js/model');
+	await model.save('file://model');
 
 	console.log('Saved model');
 }

@@ -9,18 +9,39 @@
     <script src="index.js" defer></script>
     <style>
         canvas {
-            border:1px solid #b9bfc9;margin-top:25px;
+            border: 1px solid #b9bfc9;
+            margin-top: 25px;
         }
+
+        .bar {
+            height: 30px;
+            background: #d5d5d5;
+            border-radius: 5px;
+        }
+
+        #image {
+            display: grid;
+            grid-template-columns: repeat(28, 1fr);
+            grid-template-rows: repeat(28, 1fr);
+            width: 120px;
+            height: 120px
+        }
+
+        #image > div {
+            padding: 0;
+            border: none;
+            margin: 0;
+        }
+
     </style>
 </head>
 <body>
-    <main id="container">
-      <p id="result">Prediction</p>
-      <div>
-        <button type="button" onclick="predictModel()">Predict</button>
-        <button type="button" onclick="erase()">Clear</button>
-      </div>
-      <canvas id="canvas" width="386px" height="386px"></canvas>
-    </main>
+<main id="container">
+    <p id="result">Prediction</p>
+    <button type="button" onclick="erase()">Clear</button>
+    <canvas id="canvas" width="386px" height="386px"></canvas>
+    <div id="image"></div>
+    <div id="prediction"></div>
+</main>
 </body>
 </html>

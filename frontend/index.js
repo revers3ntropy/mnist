@@ -9,6 +9,9 @@ const pos = [0, 0];
 
 tf ??= tensorflow;
 
+let JSmodel;
+let PYmodel;
+// current model in use
 let model;
 
 canvas.addEventListener('mousedown', () => {
@@ -36,7 +39,7 @@ canvas.addEventListener('mousemove', async (e) => {
     ctx.lineTo(pos.x, pos.y);
 
     ctx.stroke();
-    predictModel();
+    await predictModel();
 });
 
 function setPosition (e) {
@@ -50,10 +53,11 @@ function erase () {
     predictModel();
 }
 
-async function loadModel () {
-    model = await tf.loadLayersModel('../tensorflow.js/model/model.json');
+async function loadModel (url) {
+    let model = await tf.loadLayersModel(url);
     // warm up
-    model.predict(tf.zeros([1, 28, 28]))
+    model.predict(tf.zeros([1, 28, 28]));
+    return model;
 }
 
 function getData () {
@@ -64,7 +68,7 @@ async function predictModel () {
     const imageData = getData();
 
     // converts from a canvas data object to a tensor
-    let image = tf.browser.fromPixels(imageData)
+    let image = tf.browser.fromPixels(imageData);
 
     // pre-process image
     image = tf.image.resizeBilinear(image, [28,28]).sum(2).expandDims(0);
@@ -87,6 +91,15 @@ async function predictModel () {
     let max = 0;
     let maxV = -Infinity;
 
+    let sum = 0;
+    for (let v of y) {
+        if (v > 0) {
+            sum += v;
+        }
+    }
+
+    if (sum <= 0) sum = 1
+
     for (let i = 0; i < 10; i++) {
         if (y[i] > maxV) {
             max = i;
@@ -97,9 +110,9 @@ async function predictModel () {
 
         prediction.innerHTML += `
             <div style="width: 100%; margin: 10px;">
-                <div class=bar style="width: ${y[i] * 100}%"> </div>
+                <div class=bar style="width: ${y[i] / sum * 100}%"> </div>
                 <span style="float: left; transform: translate(20px, -20px)">
-                    ${i}: ${(y[i] * 100).toFixed(2)}%
+                    ${i}: ${(y[i] / sum * 100).toFixed(2)}%
                 </span>
             </div>
         `;
@@ -108,4 +121,9 @@ async function predictModel () {
     result.innerText = max.toString();
 }
 
-loadModel();
+(async () => {
+    JSmodel = await loadModel('../tensorflow.js/model/model.json');
+    PYmodel = await loadModel('../tensorflow/model/model.json');
+
+    model = PYmodel;
+})();

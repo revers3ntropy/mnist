@@ -81,8 +81,7 @@ async function test (model, X_test, y_test) {
 	console.log(`${totalError/n} avg error`);
 }
 
-async function main () {
-	const [X, y, X_test, y_test] = getData();
+async function buildModel () {
 	const model = tf.sequential();
 
 	model.add(
@@ -113,13 +112,14 @@ async function main () {
 		optimizer: tf.train.sgd(ALPHA),
 		loss: "meanSquaredError",
 	});
+	return model;
+}
 
+async function trainModel (model, X, y, X_test, y_test) {
 	let losses = [];
 	let times = [];
 
 	let start = now();
-
-	model.summary();
 
 	await model.fit(X, y, {
 		epochs: EPOCHS,
@@ -141,11 +141,15 @@ async function main () {
 
 	const avTime = (times.reduce((a, b) => a + b, 0) / times.length).toFixed(5);
 	console.log(avTime, 'ms on average');
+}
 
+async function main () {
+	const [X, y, X_test, y_test] = getData();
+	const model = await buildModel();
+	await trainModel(model, X, y, X_test, y_test);
+	//const model = await tf.loadLayersModel('file://../tensorflow/model/model.json');
 	await test(model, X_test, y_test);
-
 	await model.save('file://model');
-
 	console.log('Saved model');
 }
 

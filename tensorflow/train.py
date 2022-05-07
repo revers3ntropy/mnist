@@ -1,8 +1,29 @@
 import tensorflow as tf
 import tensorflow_datasets as tfds
-
+import tensorflowjs as tfjs
 
 ALPHA = 0.001
+EPOCHS = 2
+
+
+def test(model, X_test, y_test):
+    n = 100
+
+    totalError = 0
+    incorrects = 0
+
+    for i in range(n):
+        X = tf.constant(X_test[i]).set_shape([1, 28, 28])
+        y = list(model.predict(X))[0]
+        for j in range(10):
+            totalError += (y[j] - y_test[i][j]) ** 2
+
+        if max(y)[0] != max(y_test[i])[0]:
+            incorrects += 1
+
+    print(f'{incorrects}/{n} incorrect')
+    print(f'{totalError / n} avg error')
+
 
 def main():
     (ds_train, ds_test), ds_info = tfds.load(
@@ -14,7 +35,6 @@ def main():
     )
 
     def normalize_img(image, label):
-        """Normalizes images: `uint8` -> `float32`."""
         return tf.cast(image, tf.float32) / 255., label
 
     ds_train = ds_train.map(
@@ -44,11 +64,13 @@ def main():
 
     model.fit(
         ds_train,
-        epochs=100,
-        validation_data=ds_test
+        epochs=EPOCHS,
+        validation_data=ds_test,
+        verbose=False
     )
 
-    model.save('file:///home/joseph/dev/mnist/tensorflow/model')
+    model.save('file:///home/joseph/dev/mnist/tensorflow/py-model')
+    tfjs.converters.save_keras_model(model, 'model')
 
 
 if __name__ == '__main__':
